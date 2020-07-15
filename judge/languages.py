@@ -211,7 +211,7 @@ _js_lang_config = {
 //APPEND END""",
     "run": {
         "exe_name": "foo.js",
-        "command": "usr/bin/jsc foo.js",
+        "command": "usr/bin/jsc {exe_path}",
         "seccomp_rule": "general",
         "env": default_env
     }
