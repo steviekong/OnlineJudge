@@ -221,9 +221,9 @@ class UserRegisterAPI(CSRFExemptAPIView):
         data = request.data
         data["username"] = data["username"].lower()
         data["email"] = data["email"].lower()
-        captcha = Captcha(request)
-        if not captcha.check(data["captcha"]):
-            return self.error("Invalid captcha")
+        # captcha = Captcha(request)
+        # if not captcha.check(data["captcha"]):
+        #     return self.error("Invalid captcha")
         if User.objects.filter(username=data["username"]).exists():
             return self.error("Username already exists")
         if User.objects.filter(email=data["email"]).exists():
