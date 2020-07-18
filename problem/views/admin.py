@@ -470,7 +470,7 @@ class MakeContestProblemPublicAPIView(APIView):
         return self.success()
 
 
-class AddContestProblemAPI(APIView):
+class AddContestProblemAPI(CSRFExemptAPIView):
     @method_decorator(csrf_exempt)
     @validate_serializer(AddContestProblemSerializer)
     def post(self, request):

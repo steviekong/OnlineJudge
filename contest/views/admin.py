@@ -11,7 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 from account.decorators import check_contest_permission, ensure_created_by
 from account.models import User
 from submission.models import Submission, JudgeStatus
-from utils.api import APIView, validate_serializer
+from utils.api import APIView, validate_serializer, CSRFExemptAPIView
 from utils.cache import cache
 from utils.constants import CacheKey
 from utils.shortcuts import rand_str
@@ -23,7 +23,7 @@ from ..serializers import (ContestAnnouncementSerializer, ContestAdminSerializer
                            ACMContesHelperSerializer, )
 
 
-class ContestAPI(APIView):
+class ContestAPI(CSRFExemptAPIView):
 
     @method_decorator(csrf_exempt)
     @validate_serializer(CreateConetestSeriaizer)
@@ -44,6 +44,7 @@ class ContestAPI(APIView):
         contest = Contest.objects.create(**data)
         return self.success(ContestAdminSerializer(contest).data)
 
+    @method_decorator(csrf_exempt)
     @validate_serializer(EditConetestSeriaizer)
     def put(self, request):
         data = request.data
@@ -72,6 +73,7 @@ class ContestAPI(APIView):
         contest.save()
         return self.success(ContestAdminSerializer(contest).data)
 
+    @method_decorator(csrf_exempt)
     def get(self, request):
         contest_id = request.GET.get("id")
         if contest_id:
