@@ -153,6 +153,8 @@ class CheckTFARequiredAPI(APIView):
 
 
 class UserLoginAPI(APIView):
+
+    @method_decorator(csrf_exempt)
     @validate_serializer(UserLoginSerializer)
     def post(self, request):
         """
@@ -188,6 +190,7 @@ class UserLogoutAPI(APIView):
 
 
 class UsernameOrEmailCheck(APIView):
+    @method_decorator(csrf_exempt)
     @validate_serializer(UsernameOrEmailCheckSerializer)
     def post(self, request):
         """
@@ -208,6 +211,7 @@ class UsernameOrEmailCheck(APIView):
 
 class UserRegisterAPI(APIView):
     @validate_serializer(UserRegisterSerializer)
+    @method_decorator(csrf_exempt)
     def post(self, request):
         """
         User register api

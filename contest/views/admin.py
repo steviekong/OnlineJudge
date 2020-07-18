@@ -5,6 +5,8 @@ from ipaddress import ip_network
 
 import dateutil.parser
 from django.http import FileResponse
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 
 from account.decorators import check_contest_permission, ensure_created_by
 from account.models import User
@@ -22,6 +24,8 @@ from ..serializers import (ContestAnnouncementSerializer, ContestAdminSerializer
 
 
 class ContestAPI(APIView):
+
+    @method_decorator(csrf_exempt)
     @validate_serializer(CreateConetestSeriaizer)
     def post(self, request):
         data = request.data
