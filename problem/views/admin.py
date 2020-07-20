@@ -10,6 +10,8 @@ from django.conf import settings
 from django.db import transaction
 from django.db.models import Q
 from django.http import StreamingHttpResponse, FileResponse
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 
 from account.decorators import problem_permission_required, ensure_created_by
 from contest.models import Contest, ContestStatus
@@ -468,7 +470,8 @@ class MakeContestProblemPublicAPIView(APIView):
         return self.success()
 
 
-class AddContestProblemAPI(APIView):
+class AddContestProblemAPI(CSRFExemptAPIView):
+    @method_decorator(csrf_exempt)
     @validate_serializer(AddContestProblemSerializer)
     def post(self, request):
         data = request.data

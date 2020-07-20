@@ -151,8 +151,9 @@ class CheckTFARequiredAPI(APIView):
                 pass
         return self.success({"result": result})
 
+class UserLoginAPI(CSRFExemptAPIView):
 
-class UserLoginAPI(APIView):
+    @method_decorator(csrf_exempt)
     @validate_serializer(UserLoginSerializer)
     def post(self, request):
         """
@@ -187,7 +188,8 @@ class UserLogoutAPI(APIView):
         return self.success()
 
 
-class UsernameOrEmailCheck(APIView):
+class UsernameOrEmailCheck(CSRFExemptAPIView):
+    @method_decorator(csrf_exempt)
     @validate_serializer(UsernameOrEmailCheckSerializer)
     def post(self, request):
         """
@@ -206,8 +208,9 @@ class UsernameOrEmailCheck(APIView):
         return self.success(result)
 
 
-class UserRegisterAPI(APIView):
+class UserRegisterAPI(CSRFExemptAPIView):
     @validate_serializer(UserRegisterSerializer)
+    @method_decorator(csrf_exempt)
     def post(self, request):
         """
         User register api
@@ -218,9 +221,9 @@ class UserRegisterAPI(APIView):
         data = request.data
         data["username"] = data["username"].lower()
         data["email"] = data["email"].lower()
-        captcha = Captcha(request)
-        if not captcha.check(data["captcha"]):
-            return self.error("Invalid captcha")
+        # captcha = Captcha(request)
+        # if not captcha.check(data["captcha"]):
+        #     return self.error("Invalid captcha")
         if User.objects.filter(username=data["username"]).exists():
             return self.error("Username already exists")
         if User.objects.filter(email=data["email"]).exists():

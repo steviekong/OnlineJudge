@@ -211,7 +211,6 @@ _js_lang_config = {
         "exe_name": "solution.js",
         "command": "/usr/bin/nodejs {exe_path}",
         "seccomp_rule": None,
-        "env": default_env
     }
 }
 
@@ -224,5 +223,5 @@ languages = [
     {"config": _py2_lang_config, "name": "Python2", "description": "Python 2.7", "content_type": "text/x-python"},
     {"config": _py3_lang_config, "name": "Python3", "description": "Python 3.6", "content_type": "text/x-python"},
     {"config": _go_lang_config, "name": "Golang", "description": "Golang 1.14", "content_type": "text/x-go"},
-    {"config": _js_lang_config, "name": "JavaScript", "description": "JavaScript ES6", "content_type": "text/javascript"},
+    {"config": _js_lang_config, "name": "JavaScript", "description": "JavaScript ES6", "content_type": "text/javascript"}
 ]
