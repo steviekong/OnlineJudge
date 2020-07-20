@@ -82,6 +82,9 @@ class Problem(models.Model):
     statistic_info = JSONField(default=dict)
     share_submission = models.BooleanField(default=False)
 
+    # proctoring
+    proctoring_webcam = models.BooleanField(default = False)
+
     class Meta:
         db_table = "problem"
         unique_together = (("_id", "contest"),)
