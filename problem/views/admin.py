@@ -53,6 +53,7 @@ class TestCaseZipProcessor(object):
         for item in test_case_list:
             with open(os.path.join(test_case_dir, item), "wb") as f:
                 content = zip_file.read(f"{dir}{item}").replace(b"\r\n", b"\n")
+                content = content.replace(b' \n', b'\n')
                 size_cache[item] = len(content)
                 if item.endswith(".out"):
                     md5_cache[item] = hashlib.md5(content.rstrip()).hexdigest()
