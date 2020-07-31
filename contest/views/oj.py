@@ -4,9 +4,11 @@ import xlsxwriter
 from django.http import HttpResponse
 from django.utils.timezone import now
 from django.core.cache import cache
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 
 from problem.models import Problem
-from utils.api import APIView, validate_serializer
+from utils.api import APIView, validate_serializer, CSRFExemptAPIView
 from utils.constants import CacheKey, CONTEST_PASSWORD_SESSION_KEY
 from utils.shortcuts import datetime2str, check_is_id
 from account.models import AdminType
@@ -102,7 +104,7 @@ class ContestAccessAPI(APIView):
         return self.success({"access": check_contest_password(session_pass, contest.password)})
 
 
-class ContestRankAPI(APIView):
+class ContestRankAPI(CSRFExemptAPIView):
     def get_rank(self):
         if self.contest.rule_type == ContestRuleType.ACM:
             return ACMContestRank.objects.filter(contest=self.contest,
@@ -123,6 +125,7 @@ class ContestRankAPI(APIView):
         return string
 
     @check_contest_permission(check_type="ranks")
+    @method_decorator(csrf_exempt)
     def get(self, request):
         download_csv = request.GET.get("download_csv")
         force_refresh = request.GET.get("force_refresh")
