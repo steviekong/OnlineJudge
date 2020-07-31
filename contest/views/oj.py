@@ -124,7 +124,7 @@ class ContestRankAPI(CSRFExemptAPIView):
             string = chr(65 + remainder) + string
         return string
 
-    # @check_contest_permission(check_type="ranks")
+    @check_contest_permission(check_type="ranks")
     @method_decorator(csrf_exempt)
     def get(self, request):
         download_csv = request.GET.get("download_csv")
