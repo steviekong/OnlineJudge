@@ -402,4 +402,5 @@ class JudgeDispatcher(DispatcherBase):
                 rank.submission_info[problem_id] = current_score
         else:
             rank.total_score = rank.total_score + current_score
+            rank.submission_info[problem_id] = current_score
         rank.save()
