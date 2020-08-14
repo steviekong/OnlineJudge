@@ -314,8 +314,9 @@ class JudgeDispatcher(DispatcherBase):
                                                            "_id": self.problem._id,
                                                            "score": score}
                 else:
-                    contest_problems_status[problem_id]["score"] = score
-                    contest_problems_status[problem_id]["status"] = self.submission.result
+                    if contest_problems_status[problem_id]["status"] != JudgeStatus.ACCEPTED:
+                        contest_problems_status[problem_id]["status"] = self.submission.result
+                        contest_problems_status[problem_id]["score"] = score
                 user_profile.oi_problems_status["contest_problems"] = contest_problems_status
                 user_profile.save(update_fields=["oi_problems_status"])
 
