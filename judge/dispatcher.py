@@ -138,11 +138,34 @@ class JudgeDispatcher(DispatcherBase):
         else:
             code = self.submission.code
 
+        problem_time_limit_scale = {
+            "C": 1,
+            "C++": 1,
+            "Java": 2,
+            "Golang": 2,
+            "Python2": 5,
+            "Python3": 5,
+            "JavaScript": 5
+        }
+
+        problem_memory_limit = {
+            "C": 512,
+            "C++": 512,
+            "Java": 512,
+            "Golang": 512,
+            "Python2": 512,
+            "Python3": 512,
+            "JavaScript": 1024
+        }
+
+        submission_time_limit = self.problem.time_limit*problem_time_limit_scale.get(language, default=5)
+        submission_memory_limit = problem_memory_limit.get(language, default=1024)
+
         data = {
             "language_config": sub_config["config"],
             "src": code,
-            "max_cpu_time": self.problem.time_limit,
-            "max_memory": 1024 * 1024 * self.problem.memory_limit,
+            "max_cpu_time": submission_time_limit,
+            "max_memory": 1024 * 1024 * submission_memory_limit,
             "test_case_id": self.problem.test_case_id,
             "output": False,
             "spj_version": self.problem.spj_version,
