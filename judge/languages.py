@@ -209,7 +209,7 @@ _js_lang_config = {
 //APPEND END""",
     "run": {
         "exe_name": "solution.js",
-        "command": "/usr/bin/nodejs {exe_path}",
+        "command": "/usr/bin/nodejs {exe_path} --stack-size=2500",
         "seccomp_rule": None,
         "env": default_env
     }
