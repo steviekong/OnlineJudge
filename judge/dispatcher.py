@@ -158,8 +158,8 @@ class JudgeDispatcher(DispatcherBase):
             "JavaScript": 1024
         }
 
-        submission_time_limit = self.problem.time_limit*problem_time_limit_scale.get(language, default=5)
-        submission_memory_limit = problem_memory_limit.get(language, default=1024)
+        submission_time_limit = self.problem.time_limit*problem_time_limit_scale.get(language, 5)
+        submission_memory_limit = problem_memory_limit.get(language, 1024)
 
         data = {
             "language_config": sub_config["config"],
