@@ -46,8 +46,13 @@ class ProblemAPI(APIView):
         problem_id = request.GET.get("problem_id")
         if problem_id:
             try:
-                problem = Problem.objects.select_related("created_by") \
-                    .get(_id=problem_id, contest_id__isnull=True, visible=True)
+                user = request.user
+                if user.is_admin_role():
+                    problem = Problem.objects.select_related("created_by") \
+                        .get(_id=problem_id, contest_id__isnull=True)
+                else:
+                    problem = Problem.objects.select_related("created_by") \
+                        .get(_id=problem_id, contest_id__isnull=True, visible=True)
                 problem_data = ProblemSerializer(problem).data
                 self._add_problem_status(request, problem_data)
                 return self.success(problem_data)
@@ -58,7 +63,11 @@ class ProblemAPI(APIView):
         if not limit:
             return self.error("Limit is needed")
 
-        problems = Problem.objects.select_related("created_by").filter(contest_id__isnull=True, visible=True)
+        user = request.user
+        if user.is_admin_role():
+            problems = Problem.objects.select_related("created_by").filter(contest_id__isnull=True)
+        else:
+            problems = Problem.objects.select_related("created_by").filter(contest_id__isnull=True, visible=True)
         # 按照标签筛选
         tag_text = request.GET.get("tag")
         if tag_text:
@@ -95,9 +104,14 @@ class ContestProblemAPI(APIView):
         problem_id = request.GET.get("problem_id")
         if problem_id:
             try:
-                problem = Problem.objects.select_related("created_by").get(_id=problem_id,
-                                                                           contest=self.contest,
-                                                                           visible=True)
+                user = request.user
+                if user.is_admin_role():
+                    problem = Problem.objects.select_related("created_by").get(_id=problem_id,
+                                                                               contest=self.contest)
+                else:
+                    problem = Problem.objects.select_related("created_by").get(_id=problem_id,
+                                                                               contest=self.contest,
+                                                                               visible=True)
             except Problem.DoesNotExist:
                 return self.error("Problem does not exist.")
             if self.contest.problem_details_permission(request.user):
@@ -107,7 +121,11 @@ class ContestProblemAPI(APIView):
                 problem_data = ProblemSafeSerializer(problem).data
             return self.success(problem_data)
 
-        contest_problems = Problem.objects.select_related("created_by").filter(contest=self.contest, visible=True)
+        user = request.user
+        if user.is_admin_role():
+            contest_problems = Problem.objects.select_related("created_by").filter(contest=self.contest)
+        else:
+            contest_problems = Problem.objects.select_related("created_by").filter(contest=self.contest, visible=True)
         if self.contest.problem_details_permission(request.user):
             data = ProblemSerializer(contest_problems, many=True).data
             self._add_problem_status(request, data)

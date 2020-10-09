@@ -66,7 +66,11 @@ class SubmissionAPI(APIView):
             return self.error(error)
 
         try:
-            problem = Problem.objects.get(id=data["problem_id"], contest_id=data.get("contest_id"), visible=True)
+            user = request.user
+            if user.is_admin_role():
+                problem = Problem.objects.get(id=data["problem_id"], contest_id=data.get("contest_id"))
+            else:
+                problem = Problem.objects.get(id=data["problem_id"], contest_id=data.get("contest_id"), visible=True)
         except Problem.DoesNotExist:
             return self.error("Problem not exist")
         if data["language"] not in problem.languages:
@@ -139,7 +143,11 @@ class SubmissionListAPI(APIView):
         username = request.GET.get("username")
         if problem_id:
             try:
-                problem = Problem.objects.get(_id=problem_id, contest_id__isnull=True, visible=True)
+                user = request.user
+                if user.is_admin_role():
+                    problem = Problem.objects.get(_id=problem_id, contest_id__isnull=True)
+                else:
+                    problem = Problem.objects.get(_id=problem_id, contest_id__isnull=True, visible=True)
             except Problem.DoesNotExist:
                 return self.error("Problem doesn't exist")
             submissions = submissions.filter(problem=problem)
@@ -168,7 +176,11 @@ class ContestSubmissionListAPI(APIView):
         username = request.GET.get("username")
         if problem_id:
             try:
-                problem = Problem.objects.get(_id=problem_id, contest_id=contest.id, visible=True)
+                user = request.user
+                if user.is_admin_role():
+                    problem = Problem.objects.get(_id=problem_id, contest_id=contest.id)
+                else:
+                    problem = Problem.objects.get(_id=problem_id, contest_id=contest.id, visible=True)
             except Problem.DoesNotExist:
                 return self.error("Problem doesn't exist")
             submissions = submissions.filter(problem=problem)
