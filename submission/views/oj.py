@@ -130,33 +130,43 @@ class SubmissionAPI(APIView):
 
 
 class SubmissionListAPI(APIView):
+
+    @login_required
     def get(self, request):
         if not request.GET.get("limit"):
             return self.error("Limit is needed")
         if request.GET.get("contest_id"):
             return self.error("Parameter error")
-
-        submissions = Submission.objects.filter(contest_id__isnull=True).select_related("problem__created_by")
         problem_id = request.GET.get("problem_id")
         myself = request.GET.get("myself")
         result = request.GET.get("result")
         username = request.GET.get("username")
-        if problem_id:
-            try:
-                user = request.user
-                if user.is_admin_role():
-                    problem = Problem.objects.get(_id=problem_id, contest_id__isnull=True)
-                else:
-                    problem = Problem.objects.get(_id=problem_id, contest_id__isnull=True, visible=True)
-            except Problem.DoesNotExist:
-                return self.error("Problem doesn't exist")
-            submissions = submissions.filter(problem=problem)
+        user = request.user
+        if user.is_admin_role() is False:
+            if problem_id:
+                try:
+                    current_problem = Problem.objects.get(_id=problem_id, contest_id__isnull=True, visible=True)
+                    submissions = Submission.objects.filter(problem=current_problem).select_related("problem__created_by")
+                except Problem.DoesNotExist:
+                    return self.error("Problem doesn't exist")
+            else:
+                return self.error("Invalid Page")
+        else:
+            if problem_id:
+                try:
+                    current_problem = Problem.objects.get(_id=problem_id, contest_id__isnull=True)
+                    submissions = Submission.objects.filter(problem=current_problem).select_related("problem__created_by")
+                except Problem.DoesNotExist:
+                    return self.error("Problem doesn't exist")
+            else:
+                submissions = Submission.objects.filter().select_related("problem__created_by")
         if (myself and myself == "1") or not SysOptions.submission_list_show_all:
             submissions = submissions.filter(user_id=request.user.id)
         elif username:
             submissions = submissions.filter(username__icontains=username)
         if result:
             submissions = submissions.filter(result=result)
+        submissions = submissions[0:400]
         data = self.paginate_data(request, submissions)
         data["results"] = SubmissionListSerializer(data["results"], many=True, user=request.user).data
         return self.success(data)

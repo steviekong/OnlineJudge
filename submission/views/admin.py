@@ -12,7 +12,9 @@ class SubmissionRejudgeAPI(APIView):
         if not id:
             return self.error("Parameter error, id is required")
         try:
-            submission = Submission.objects.select_related("problem").get(id=id, contest_id__isnull=True)
+            submission = Submission.objects.select_related("problem").get(id=id)
+            if submission.contest is not None:
+                return self.error("You are trying to resubmit a submission of a contest")
         except Submission.DoesNotExist:
             return self.error("Submission does not exists")
         submission.statistic_info = {}
