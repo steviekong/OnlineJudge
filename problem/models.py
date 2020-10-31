@@ -50,6 +50,7 @@ class Problem(models.Model):
     test_case_id = models.TextField()
     # [{"input_name": "1.in", "output_name": "1.out", "score": 0}]
     test_case_score = JSONField()
+    submission_test_case_info = models.BooleanField(default=True)
     hint = RichTextField(null=True)
     languages = JSONField()
     template = JSONField()
