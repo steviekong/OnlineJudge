@@ -159,14 +159,16 @@ class SubmissionListAPI(APIView):
                 except Problem.DoesNotExist:
                     return self.error("Problem doesn't exist")
             else:
-                submissions = Submission.objects.filter().select_related("problem__created_by")
+                if username:
+                    submissions = Submission.objects.filter(username__icontains=username).select_related("problem__created_by")
+                else:
+                    submissions = Submission.objects.filter(contest_id__isnull=True).select_related("problem__created_by")
         if (myself and myself == "1") or not SysOptions.submission_list_show_all:
             submissions = submissions.filter(user_id=request.user.id)
         elif username:
             submissions = submissions.filter(username__icontains=username)
         if result:
             submissions = submissions.filter(result=result)
-        submissions = submissions[0:400]
         data = self.paginate_data(request, submissions)
         data["results"] = SubmissionListSerializer(data["results"], many=True, user=request.user).data
         return self.success(data)
