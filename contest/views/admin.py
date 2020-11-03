@@ -272,7 +272,7 @@ class ContestCheckSimilarAPI(APIView):
 
             output_dir = os.path.join(check_dir, "result")
             check_files = check_dir + "/*"
-            os.system(f"/app/sim_c -p -t40 -o {output_dir} {check_files}")
+            os.system(f"/app/sim_c -p -T -r10 -t40 -o {output_dir} {check_files}")
             f = open(output_dir)
             similar_submissions = []
             for line in f:
