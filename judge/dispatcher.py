@@ -167,7 +167,7 @@ class JudgeDispatcher(DispatcherBase):
             "max_cpu_time": submission_time_limit,
             "max_memory": 1024 * 1024 * submission_memory_limit,
             "test_case_id": self.problem.test_case_id,
-            "output": False,
+            "output": self.problem.submission_test_case_info,
             "spj_version": self.problem.spj_version,
             "spj_config": spj_config.get("config"),
             "spj_compile_config": spj_config.get("compile"),
