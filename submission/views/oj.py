@@ -5,6 +5,7 @@ from contest.models import ContestStatus, ContestRuleType
 from judge.tasks import judge_task
 from options.options import SysOptions
 # from judge.dispatcher import JudgeDispatcher
+from judge.ide import IDEDispatcher
 from problem.models import Problem, ProblemRuleType
 from utils.api import APIView, validate_serializer
 from utils.cache import cache
@@ -213,3 +214,29 @@ class SubmissionExistsAPI(APIView):
         return self.success(request.user.is_authenticated and
                             Submission.objects.filter(problem_id=request.GET["problem_id"],
                                                       user_id=request.user.id).exists())
+
+
+class IDEAPI(APIView):
+    @login_required
+    def post(self, request):
+        data = request.data
+
+        if data.get("captcha"):
+            if not Captcha(request).check(data["captcha"]):
+                return self.error("Invalid captcha")
+
+        language = data["language"]
+        src = data["code"]
+        test_case = [{
+            "input": data["input"],
+            "output": "0"
+        }]
+
+        # use this to debug
+        result = IDEDispatcher(src, language, test_case).judge()
+        # result = judge_IDE_task.send(src, language, test_case)
+
+        return self.success(result)
+
+    def get(self, request):
+        return self.success
